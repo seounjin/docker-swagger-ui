@@ -1,0 +1,18 @@
+language: generic
+
+sudo: required
+
+services:
+    - docker
+
+before_install:
+    - echo "start creating an image with dockerfile"
+    - docker build -t invanda/docker-swagger-api -f ./backend/Dockerfile.dev ./backend
+
+script:
+  - docker run -e CI=true invanda/docker-swagger-api npm run dev
+
+after_success:
+    - docker build -t invanda/docker-backend ./backend
+    - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_ID" --password-stdin
+    - docker push smileajw1004/docker-backend
