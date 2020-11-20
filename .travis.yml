@@ -1,9 +1,11 @@
-language: generic
+os: linux
 
-sudo: required
+language: generic
 
 services:
     - docker
+
+dist: xenial
 
 before_install:
     - echo "start creating an image with dockerfile"
@@ -16,3 +18,8 @@ after_success:
     - docker build -t invanda/docker-backend ./backend
     - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_ID" --password-stdin
     - docker push smileajw1004/docker-backend
+    - echo "Test Success!"
+
+
+after_failure:
+    - echo "Test Fail!" 
