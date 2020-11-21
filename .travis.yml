@@ -24,10 +24,10 @@ after_success:
 deploy:
     provider: elasticbeanstalk
     region: "ap-northeast-2"
-    app: "node-swagger-ui"
-    env: "NodeSwaggerUi-env"
+    app: "node-swagger-api"
+    env: "NodeSwaggerApi-env"
     bucket_name: elasticbeanstalk-ap-northeast-2-769503300421
-    bucket_path: "node-swagger-ui"
+    bucket_path: "node-swagger-api"
     on:
         branch: master
     access_key_id: $AWS_ACCESS_KEY
