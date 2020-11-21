@@ -3,16 +3,24 @@
     "containerDefinitions": [
         {
             "name": "backend",
-            "image": "invanda/docker-backend",
+            "image": "smileajw1004/docker-backend",
             "hostname": "backend",
+            "essential": false,
+            "memory": 128
+        },
+        {
+            "name": "nginx",
+            "image": "smileajw1004/docker-nginx",
+            "hostname": "nginx",
             "essential": true,
-            "memory": 128,
             "portMappings": [
                 {
-                    "hostPort": 5000,
-                    "containerPort": 5000
+                    "hostPort": 80,
+                    "containerPort": 80
                 }
-            ]
+            ],
+            "links": ["backend"],
+            "memory": 128
         }
     ]
 }

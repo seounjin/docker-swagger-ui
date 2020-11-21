@@ -16,8 +16,12 @@ script:
 
 after_success:
     - docker build -t invanda/docker-backend ./backend
+    - docker build -t invanda/docker-nginx ./nginx
     - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_ID" --password-stdin
+
     - docker push invanda/docker-backend
+    - docker push invanda/docker-nginx
+
     - echo "Test Success!"
 
 
@@ -30,6 +34,7 @@ deploy:
     bucket_path: "node-swagger-api"
     on:
         branch: master
+        
     access_key_id: $AWS_ACCESS_KEY
     secret_access_key: $AWS_SECRET_ACCESS_KEY
 
