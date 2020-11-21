@@ -1,0 +1,1975 @@
+swagger : "2.0"
+info :
+    title: Basic-Bulletin-Board-Project
+    description: 기본 게시판 프로젝트 - 서버 RestAPI 문서
+    
+paths:
+
+  ####### User #######
+
+  # 유저 회원 가입
+  /api/users/register:
+      post:
+          tags:
+              - user
+          summary: "(회원 가입)"
+          parameters:
+              - in: "body"
+                name: "body"
+                description: ""
+                required: true
+                schema:
+                  $ref: "#/user/register/request"
+          responses: 
+              "200":
+                  description: "가입 성공"
+                  schema:
+                      $ref: "#/user/register/response_200"
+              "400":
+                  description: "가입 실패"
+                  schema:
+                      $ref: "#/user/register/response_400"
+  # 로그인
+  /api/users/login:
+      post:
+          tags:
+              - user
+          summary: "(로그인)"
+          parameters:
+              - in: "body"
+                name: "body"
+                description: ""
+                required: true
+                schema:
+                  $ref: "#/user/login/request"
+          responses: 
+              "200":
+                  description: "로그인 성공"
+                  # description: "사용자에 부여한 권한의 참 값과 토큰을 전달"
+                  schema:
+                      $ref: "#/user/login/response_200"
+              "400":
+                  description: "로그인 실패"
+                  schema:
+                      $ref: "#/user/login/response_400"
+  # 로그 아웃
+  /api/users/logout: 
+      get:
+          tags:
+              - user
+          summary: "(로그아웃)"
+          responses: 
+              "200":
+                  description: "로그아웃 성공"
+                  schema:
+                      $ref: "#/user/logout/response_200"
+              "400":
+                  description: "로그아웃 실패"
+                  schema:
+                      $ref: "#/user/logout/response_400"
+
+# 토큰 재요청
+  /api/users/tokenRequest: 
+        get:
+            tags:
+                - user
+            summary: "(access token 요청)"
+            responses: 
+                "200":
+                    description: "access token 재발급하여 쿠키에 저장"
+                    schema:
+                        $ref: "#/user/logout/response_200"
+                "400":
+                    description: "access token 실패"
+                    schema:
+                        $ref: "#/user/logout/response_400"
+
+# 공개키 요청
+  /api/users/requestPublicKey: 
+        get:
+            tags:
+                - user
+            summary: "(public key 요청)"
+            responses: 
+                "200":
+                    description: "공개키 응답"
+                    schema:
+                        $ref: "#/user/requestPublicKey/response_200"
+                "400":
+                    description: "에러"
+                    schema:
+                        $ref: "#/user/requestPublicKey/response_400"
+
+# auth
+  /api/users/auth:
+    get:
+      tags:
+          - user
+      summary: "(사용자 인증 요청)"
+      responses: 
+          "사용자 인증 완료 200":
+              description: "유저 정보"
+              schema:
+                  $ref: "#/user/auth/response_200"
+          "로그인하지 않는 유저 200":
+              description: "토큰 없음"
+              schema:
+                  $ref: "#/user/auth/emptyToken"
+          "토큰만료 200":
+              description: "토큰 만료"
+              schema:
+                  $ref: "#/user/auth/expToken"
+
+
+  ####### 보드 #######
+
+  /api/board/createPost:
+    post:
+      summary: (글 생성)
+      tags:
+        - board
+      parameters:
+        - name: body
+          in: body
+          description: "생성한 글 정보"
+          required: true
+          schema:
+            $ref: '#/board/createPost/request'
+
+      responses:
+        '200':
+          description: "성공"
+          schema:
+            $ref: '#/board/createPost/response_200'
+
+        '400':
+          description: "에러"
+          schema:
+            $ref: '#/board/response_400'
+
+  /api/board/requestBoardForm/{postNum}:
+    get:
+      summary: (게시글 요청)
+      tags:
+        - board
+      parameters:
+        - name: "postNum"
+          in: "path"
+          description: "7"
+          type: "integer"
+          
+      responses:
+        '200':
+          description: "성공"
+          schema:
+            $ref: '#/board/requestBoardForm/response_200'
+
+        '400':
+          description: "에러"
+          schema:
+            $ref: '#/board/response_400'
+
+
+  /api/board/deletePost/{postNum}:
+    delete:
+      summary: (게시글 삭제 요청)
+      tags:
+        - board
+      parameters:
+        - name: "postNum"
+          in : "path"
+          description: 7
+          required: true
+          type: 'integer'
+
+      responses:
+        '200':
+          description: "성공"
+          schema:
+            $ref: '#/board/deletePost/response_200'
+
+        '400':
+          description: "에러"
+          schema:
+            $ref: '#/board/response_400'
+
+  /api/board/modifyPost:
+    post:
+      summary: (게시글 내용 수정)
+      tags:
+        - board
+      parameters:
+        - name: body
+          in: body
+          description: "게시글 수정 사항"
+          required: true
+          schema:
+            $ref: '#/board/modifyPost/request'
+
+      responses:
+        '이전 게시글 내용과 동일함 200':
+          description: "성공"
+          schema:
+            $ref: '#/board/modifyPost/response_200_case_1'
+
+        '게시글 수정 완료 200':
+          description: "성공"
+          schema:
+            $ref: '#/board/modifyPost/response_200_case_2'
+
+        '400':
+          description: "에러"
+          schema:
+            $ref: '#/board/response_400'
+
+  /api/board/getTotal:
+    get:
+      summary: (전체 게시물의 갯수)
+      tags:
+        - board
+ 
+      responses:
+        '200':
+          description: "성공"
+          schema:
+            $ref: '#/board/getTotal/response_200'
+
+        '400':
+          description: "에러"
+          schema:
+            $ref: '#/board/response_400'
+    
+  /api/board/getFavorite:
+    post:
+      summary: (유저가 좋아요 정보를 눌렀는지 확인 요청)
+      tags:
+        - board
+      parameters:
+        - name: body
+          in: body
+          description: "해당 게시글 정보"
+          required: true
+          schema:
+            $ref: '#/board/getFavorite/request'
+
+      responses:
+        '200':
+          description: "성공"
+          schema:
+            $ref: '#/board/getFavorite/response_200'
+
+        '400':
+          description: "에러"
+          schema:
+            $ref: '#/board/response_400'
+
+
+  /api/board/favorite:
+    post:
+      summary: (좋아요 누름 요청)
+      tags:
+        - board
+      parameters:
+        - name: body
+          in: body
+          description: "좋아요 누른 게시글 정보"
+          required: true
+          schema:
+            $ref: '#/board/favorite/request'
+
+      responses:
+        '200':
+          description: "성공"
+          schema:
+            $ref: '#/board/favorite/response_200'
+
+        '400':
+          description: "에러"
+          schema:
+            $ref: '#/board/response_400'
+
+
+  /api/board/unFavorite:
+    post:
+      summary: (좋아요 취소 요청)
+      tags:
+        - board
+      parameters:
+        - name: body
+          in: body
+          description: "좋아요 취소한 게시글 정보"
+          required: true
+          schema:
+            $ref: '#/board/unFavorite/request'
+
+      responses:
+        '200':
+          description: "성공"
+          schema:
+            $ref: '#/board/unFavorite/response_200'
+
+        '400':
+          description: "에러"
+          schema:
+            $ref: '#/board/response_400'
+  
+  /api/board/getPage:
+        post:
+            tags:
+                - board
+            summary: "(게시글 목록 요청)"
+            parameters:
+                - in: "body"
+                  name: "body"
+                  description: ""
+                  required: true
+                  schema:
+                    $ref: "#/board/getPage/request"
+            responses: 
+                "200":
+                    description: "요청 성공"
+                    schema:
+                        $ref: "#/board/getPage/response_200"
+                "400":
+                    description: "요청 실패"
+                    schema:
+                        $ref: "#/board/getPage/response_400"
+
+  ####### 댓글 #######
+
+  /api/comment/deleteComment/{cNum}:
+    delete:
+      summary: (댓글 삭제)
+      tags:
+        - comment
+      parameters:
+        - name: "cNum"
+          in: "path"
+          description: "7"
+          required: true
+          type: "integer"
+
+      responses:
+        '200':
+          description: "성공"
+          schema:
+            $ref: '#/comment/deleteComment/response_200'
+        '400':
+          description: "에러"
+          schema:
+            $ref: '#/comment/response_400'
+
+  /api/comment/modifyComment:
+    post:
+      summary: (댓글 수정)
+      tags:
+        - comment
+
+      parameters:
+        - name: body
+          in: body
+          description: "수정할 데이터"
+          required: true
+          schema:
+            $ref: '#/comment/modifyComment/request'
+      responses:
+        '200':
+          description: "성공"
+          schema:
+            $ref: '#/comment/modifyComment/response_200'
+        '400':
+          description: "에러"
+          schema:
+            $ref: '#/comment/response_400'
+  
+  /api/comment/saveRootComment:
+    post:
+      summary: (부모댓글 저장)
+      tags:
+        - comment
+
+      parameters:
+        - name: body
+          in: body
+          description: "저장할 댓글 데이터"
+          required: true
+          schema:
+            $ref: '#/comment/saveRootComment/request'
+      responses:
+        '200':
+          description: "성공"
+          schema:
+            $ref: '#/comment/saveRootComment/response_200'
+        '400':
+          description: "에러"
+          schema:
+            $ref: '#/comment/response_400'
+
+  /api/comment/saveChildComment:
+    post:
+      summary: (자식댓글 저장)
+      tags:
+        - comment
+
+      parameters:
+        - name: body
+          in: body
+          description: "저장할 댓글 데이터"
+          required: true
+          schema:
+            $ref: '#/comment/saveChildComment/request'
+      responses:
+        '200':
+          description: "성공"
+          schema:
+            $ref: '#/comment/saveChildComment/response_200'
+        '400':
+          description: "에러"
+          schema:
+            $ref: '#/comment/response_400'
+
+  /api/comment/getCommentPage:
+      post:
+        summary: (등록순으로 댓글 요청)
+        tags:
+          - comment
+
+        parameters:
+          - name: body
+            in: body
+            description: "요청할 댓글 정보"
+            required: true
+            schema:
+              $ref: '#/comment/getCommentPage/request'
+        responses:
+          '200':
+            description: "성공"
+            schema:
+              $ref: '#/comment/getCommentPage/response_200'
+          '400':
+            description: "에러"
+            schema:
+              $ref: '#/comment/response_400'
+
+  /api/comment/getLatestComment:
+        post:
+          summary: (최신순으로 댓글 요청)
+          tags:
+            - comment
+
+          parameters:
+            - name: body
+              in: body
+              description: "요청할 댓글 정보"
+              required: true
+              schema:
+                $ref: '#/comment/getLatestComment/request'
+          responses:
+            '200':
+              description: "성공"
+              schema:
+                $ref: '#/comment/getLatestComment/response_200'
+            '400':
+              description: "에러"
+              schema:
+                $ref: '#/comment/response_400'
+
+
+
+####### 신고 #######
+
+  /api/report/saveReport:
+    post:
+      summary: (게시글 신고)
+      tags:
+        - report
+      parameters:
+        - name: body
+          in: body
+          description: "신고할 게시글 정보"
+          required: true
+          schema:
+            $ref: '#/report/saveReport/request'
+
+      responses:
+        '이미 신고한 게시물 200':
+          description: "성공"
+          schema:
+            $ref: '#/report/saveReport/response_200_case_1'
+
+        '신고 완료 200':
+          description: "성공"
+          schema:
+            $ref: '#/report/saveReport/response_200_case_2'
+        
+        '400':
+          description: "에러"
+          schema:
+            $ref: '#/report/response_400'
+
+
+  /api/report/getReportPost/{page}:
+    get:
+      summary: (신고된 게시글 요청)
+      tags:
+        - report
+      parameters:
+        - name: "page"
+          in: "path"
+          description: "게시글 페이지"
+          required: true
+          type: "integer"
+
+      responses:
+        '200':
+          description: "성공"
+          schema:
+            $ref: '#/report/getReportPost/response_200'
+
+        '400':
+          description: "에러"
+          schema:
+            $ref: '#/report/response_400'
+        
+  /api/report/deleteReportPost:
+    post:
+      summary: (신고된 게시글 삭제)
+      tags:
+        - report
+      parameters:
+        - name: body
+          in: body
+          description: "삭제할 게시글 정보"
+          required: true
+          schema:
+            $ref: '#/report/deleteReportPost/request'
+
+      responses:
+        '200':
+          description: "성공"
+          schema:
+            $ref: '#/report/deleteReportPost/response_200'
+
+        '400':
+          description: "에러"
+          schema:
+            $ref: '#/report/response_400'
+
+
+  /api/report/saveReportComment:
+    post:
+      summary: (댓글 신고)
+      tags:
+        - report
+      parameters:
+        - name: body
+          in: body
+          description: "신고할 댓글 정보"
+          required: true
+          schema:
+            $ref: '#/report/saveReportComment/request'
+
+      responses:
+        '이미 신고한 게시물 200':
+          description: "성공"
+          schema:
+            $ref: '#/report/saveReportComment/response_200_case_1'
+        
+        '신고 완료 200':
+          description: "성공"
+          schema:
+            $ref: '#/report/saveReportComment/response_200_case_2'
+
+        '400':
+          description: "에러"
+          schema:
+            $ref: '#/report/response_400'
+
+            
+  /api/report/getReportComment/{page}:
+    get:
+      summary: (신고된 댓글 요청)
+      tags:
+        - report
+      parameters:
+        - name: "page"
+          in: "path"
+          description: "게시글 페이지"
+          required: true
+          type: "integer"
+
+      responses:
+        '200':
+          description: "성공"
+          schema:
+            $ref: '#/report/getReportComment/response_200'
+
+        '400':
+          description: "에러"
+          schema:
+            $ref: '#/report/response_400'
+
+
+  /api/report/deleteReportComment:
+    post:
+      summary: (신고된 댓글 삭제)
+      tags:
+        - report
+      parameters:
+        - name: body
+          in: body
+          description: "삭제할 댓글 정보"
+          required: true
+          schema:
+            $ref: '#/report/deleteReportComment/request'
+
+      responses:
+        '200':
+          description: "성공"
+          schema:
+            $ref: '#/report/deleteReportComment/response_200'
+
+        '400':
+          description: "에러"
+          schema:
+            $ref: '#/report/response_400'
+  
+
+  ####### mypage #######
+
+  # 마이페이지 정보 전달
+  /api/mypage/getActionNum:
+    post:
+        tags:
+            - mypage
+        summary: "(마이페이지 정보)"
+        parameters:
+            - in: "body"
+              name: "body"
+              description: ""
+              required: true
+              schema:
+                $ref: "#/mypage/getActionNum/request"
+        responses: 
+            "200":
+                description: "정보 전달 성공"
+                schema:
+                    $ref: "#/mypage/getActionNum/response_200"
+            "400":
+                description: "정보 전달 실패"
+                schema:
+                    $ref: "#/mypage/getActionNum/response_400"
+
+  #마이페이지 비번 확인
+  /api/mypage/confirmPassword:
+      post:
+          tags:
+              - mypage
+          summary: "(비밀번호 확인)"
+          parameters:
+              - in: "body"
+                name: "body"
+                description: ""
+                required: true
+                schema:
+                  $ref: "#/mypage/confirmPassword/request"
+          responses: 
+              "200":
+                  description: "비밀번호 맞음"
+                  schema:
+                      $ref: "#/mypage/confirmPassword/response_200"
+              "400":
+                  description: "비밀번호 틀림"
+                  schema:
+                      $ref: "#/mypage/confirmPassword/response_400"
+  # 개인정보 변경
+  /api/mypage/modifyPrivacy:
+      post:
+          tags:
+              - mypage
+          summary: "(개인정보 변경)"
+          parameters:
+              - in: "body"
+                name: "body"
+                description: ""
+                required: true
+                schema:
+                  $ref: "#/mypage/modifyPrivacy/request"
+          responses: 
+              "200":
+                  description: "변경 성공"
+                  schema:
+                      $ref: "#/mypage/modifyPrivacy/response_200"
+              "400":
+                  description: "변경 실패"
+                  schema:
+                      $ref: "#/mypage/modifyPrivacy/response_400"
+
+  # 작성 게시물 요청
+  /api/mypage/getActivity:
+      post:
+          tags:
+              - mypage
+          summary: "(사용자 작성 게시물 요청)"
+          parameters:
+              - in: "body"
+                name: "body"
+                description: ""
+                required: true
+                schema:
+                  $ref: "#/mypage/getActivity/request"
+          responses: 
+              "200":
+                  description: "성공"
+                  schema:
+                      $ref: "#/mypage/getActivity/response_200"
+              "400":
+                  description: "실패"
+                  schema:
+                      $ref: "#/mypage/getActivity/response_400"
+
+  # 사용자 신고 댓글 내역
+  /api/mypage/getMyReportComment:
+      post:
+          tags:
+              - mypage
+          summary: "(사용자 신고 댓글 내역 요청)"
+          parameters:
+              - in: "body"
+                name: "body"
+                description: ""
+                required: true
+                schema:
+                  $ref: "#/mypage/getMyReportComment/request"
+          responses: 
+              "200":
+                  description: "요청 성공"
+                  schema:
+                      $ref: "#/mypage/getMyReportComment/response_200"
+              "400":
+                  description: "요청 실패"
+                  schema:
+                      $ref: "#/mypage/getMyReportComment/response_400"
+
+  # 사용자 신고 게시글 내역
+  /api/mypage/getMyReportPost:
+      post:
+          tags:
+              - mypage
+          summary: "(사용자 신고 게시글 내역 요청)"
+          parameters:
+              - in: "body"
+                name: "body"
+                description: ""
+                required: true
+                schema:
+                  $ref: "#/mypage/getMyReportPost/request"
+          responses: 
+              "200":
+                  description: "요청 성공"
+                  schema:
+                      $ref: "#/mypage/getMyReportPost/response_200"
+              "400":
+                  description: "요청 실패"
+                  schema:
+                      $ref: "#/mypage/getMyReportPost/response_400"
+
+  # 사용자 신고 게시글 취소 요청
+  /api/mypage/cancelmyReportPost:
+      post:
+          tags:
+              - mypage
+          summary: "(사용자 신고 게시글 취소 요청)"
+          parameters:
+              - in: "body"
+                name: "body"
+                description: ""
+                required: true
+                schema:
+                  $ref: "#/mypage/cancelmyReportPost/request"
+          responses: 
+              "200":
+                  description: "요청 성공"
+                  schema:
+                      $ref: "#/mypage/cancelmyReportPost/response_200"
+              "400":
+                  description: "요청 실패"
+                  schema:
+                      $ref: "#/mypage/cancelmyReportPost/response_400"
+
+  # 사용자 신고 댓글 취소 요청
+  /api/mypage/cancelmyReportComment:
+      post:
+          tags:
+              - mypage
+          summary: "(사용자 신고 댓글 취소 요청)"
+          parameters:
+              - in: "body"
+                name: "body"
+                description: ""
+                required: true
+                schema:
+                  $ref: "#/mypage/cancelmyReportComment/request"
+          responses: 
+              "200":
+                  description: "요청 성공"
+                  schema:
+                      $ref: "#/mypage/cancelmyReportComment/response_200"
+              "400":
+                  description: "요청 실패"
+                  schema:
+                      $ref: "#/mypage/cancelmyReportComment/response_400"
+
+  #사용자 아바타 이미지 업로드
+  /api/mypage/imageUpload:
+      post:
+          tags:
+              - mypage
+          summary: "(사용자 아바타 이미지 업로드)"
+          parameters:
+              - in: "formData"
+                name: "formData"
+                description: ""
+                required: true
+          responses: 
+              "200":
+                  description: "요청 성공"
+                  schema:
+                      $ref: "#/mypage/imageUpload/response_200"
+              "400":
+                  description: "요청 실패"
+                  schema:
+                      $ref: "#/mypage/imageUpload/response_400"
+
+
+##### board 모델 #####
+
+board:
+  # 게시글 요청
+  getPage:
+    request:
+        type: "object"
+        required:
+            - "keyword"
+            - "currentPage"
+            - "pageSize"
+        properties:
+            keyword:
+                type: "string"
+                example: "게시글 검색 내용"
+            currentPage:
+                type: "string"
+                example: "1"
+            pageSize:
+                type: "integer"
+                example: "10"
+    response_200:
+        type: "object"
+        properties:
+            success:
+                type: "boolean"
+                example: true
+            boardList:
+                type: "array"
+                items:
+                    $ref: "#/arrays/boardTextRow"
+            pageData:
+                type: "object"
+                properties:
+                    totalPage:
+                        type: "integer"
+                        example: 77
+    response_400:
+        type: "object"
+        properties:
+            success:
+                type: "boolean"
+                example: false
+            err:
+                type: "any"
+  TextRow:
+    type: "object"
+    properties:
+      title:
+        type: "string"
+        example: "글 제목"
+      writer:
+        type: "string"
+        example: "글 작성자"
+      pContent:
+        type: "string"
+        example: "글 내용"
+      views:
+        type: "integer"
+        example: 10
+      date:
+        type: "string"
+        example: "2020-07-07 12:00:00"
+      favorite:
+            type: "integer"
+            example: "10"
+      avatar:
+        type: "string"
+        example: 'img 경로'
+  
+
+  unFavorite:
+    request:
+      type: "object"
+      properties:
+        userId:
+          type: "string"
+          example: "bsj"
+        postNum:
+          tpye: "integer"
+          example: 1
+
+    response_200:
+      properties:
+        success:
+          type: "boolean"
+          example: true
+
+  favorite:
+    request:
+      type: "object"
+      properties:
+        userId:
+          type: "string"
+          example: "bsj"
+        postNum:
+          tpye: "integer"
+          example: 1
+
+    response_200:
+      properties:
+        success:
+          type: "boolean"
+          example: true
+
+
+  getFavorite:
+    request:
+      type: "object"
+      properties:
+        userId:
+          type: "string"
+          example: "bsj"
+        postNum:
+          tpye: "integer"
+          example: 1
+
+    response_200:
+      properties:
+        success:
+          type: "boolean"
+          example: true
+        facorite:
+          tpye: "boolean"
+          example: True
+
+
+  getTotal:
+    response_200:
+      type: "object"
+      properties:
+        success:
+          type: "boolean"
+          example: true
+        total:
+          tpye: "integer"
+          example: 100
+
+
+  modifyPost:
+    request:
+      type: "object"
+      properties:
+        pNum:
+          type: "integer"
+          example: 1
+        title:
+          tpye: "string"
+          example: "게시글 제목"
+        pContent:
+          type: "string"
+          example: "게시글 내용"
+
+    response_200_case_1:
+        type: "object"
+        properties:
+          success:
+            type: "boolean"
+            example: true
+          isSame:
+            type: "boolean"
+            example: true
+          
+    
+    response_200_case_2:
+        type: "object"
+        properties:
+          success:
+            type: "boolean"
+            example: true
+          isSame:
+            type: "boolean"
+            example: false
+          
+
+  deletePost:
+    request:
+      type: "object"
+      properties:
+        pNum:
+          type: "integer"
+          example: 1
+
+    response_200:
+        type: "object"
+        properties:
+          success:
+            type: "boolean"
+            example: true
+          
+    
+  requestBoardForm:
+    request:
+      type: "object"
+      properties:
+        postNum:
+          type: "integer"
+          example: 1
+
+    response_200:
+        type: "object"
+        properties:
+          success:
+            type: "boolean"
+            example: true
+          content:
+            type: "array"
+            items:
+              $ref: '#/board/TextRow'
+            
+          postNum:
+            type: integer
+            example: 1
+  
+  createPost:          
+    request:
+      type: "object"
+      properties:
+        writer:
+          type: "string"
+          example: "bsj"
+        date:
+          type: "string"
+          example: "2020-07-07 12:00:00"
+        title:
+          type: "string"
+          example: "글 제목"
+        pContent:
+          type: "string"
+          example: " 글 내용"
+
+    response_200:
+        type: "object"
+        properties:
+          success:
+            type: "boolean"
+            example: true
+          postNum:
+            type: integer
+            example: 1
+
+  response_400:
+    type: "object"
+    properties:
+      success:
+        type: "boolean"
+        example: false
+      err:
+        type: "any"
+
+
+##### report 모델 #####
+
+report:
+  TextRow:
+    type: "object"
+    properties:
+      pNum:
+        type: "integer"
+        example: 1
+      rContent:
+        type: "string"
+        example: "신고 사유"
+      fromId:
+        type: "string"
+        example: "bsj"
+      toId:
+        type: "string"
+        example: "invanda"
+      date:
+        type: "string"
+        example: "2020-07-07 12:00:00"
+      cGroupSquence:
+            type: "string"
+            example: "65"
+
+  deleteReportComment:
+    request:
+      type: "object"
+      properties:
+        cGroupSquence:
+          type: "string"
+          example: "65"
+
+    response_200:
+      type: "object"
+      properties:
+        success:
+          type: "boolean"
+          example: true
+
+
+  getReportComment:
+    request:
+      type: "object"
+      properties:
+        currentPage:
+          type: "integer"
+          example: 1
+
+    response_200:
+      tpye: "object"
+      properties:
+        success:
+          type: "boolean"
+          example: true
+        data:
+          type: "array"
+          items:
+            $ref: '#/report/TextRow'
+        count:
+          type: "integer"
+          example: 10
+  
+
+  saveReportComment:
+    request:
+      type: "object"
+      properties:
+        pNum:
+          type: "integer"
+          example: 1
+        content:
+          type: "string"
+          example: "댓글 내용"
+        rContent:
+          type: "string"
+          example: "신고 사유"
+        fromId:
+          type: "string"
+          example: "bsj"
+        toId:
+          type: "string"
+          example: "invanda"
+        date:
+          type: "string"
+          example: "2020-07-07 12:00:00"
+
+    response_200_case_1:
+      type: "object"
+      properties:
+        success:
+          type: "boolean"
+          example: true
+        report:
+          type: "boolean"
+          example: true
+    
+    response_200_case_2:
+      type: "object"
+      properties:
+        success:
+          type: "boolean"
+          example: true
+        report:
+          type: "boolean"
+          example: false
+
+
+  deleteReportPost:
+    request:
+      type: "object"
+      properties:
+        pNum:
+          type: "integer"
+          example: 1
+
+    response_200:
+      type: "object"
+      properties:
+        success:
+          type: "boolean"
+          example: true
+
+  
+  getReportPost:
+    request:
+      type: "object"
+      properties:
+        currentPage:
+          type: "integer"
+          example: 1
+
+    response_200:
+      type: "object"
+      properties:
+        success:
+          type: "boolean"
+          example: true
+        data:
+          type: "array"
+          items:
+            $ref: '#/report/TextRow'
+        count:
+          type: "integer"
+          example: 10
+
+          
+  saveReport:
+    request:
+      type: "object"
+      properties:
+        pNum:
+          type: "integer"
+          example: 1
+        rContent:
+          type: "string"
+          example: "신고 사유"
+        fromId:
+          type: "string"
+          example: "bsj"
+        toId:
+          type: "string"
+          example: "invanda"
+        date:
+          type: "string"
+          example: "2020-07-07 12:00:00"
+        pContent:
+          type: "string"
+          example: "신고된 게시판 글 내용"
+
+          
+    response_200_case_1:
+      type: "object"
+      properties:
+        success:
+          type: "boolean"
+          example: true
+        report:
+          type: "boolean"
+          example: true
+    
+    response_200_case_2:
+      type: "object"
+      properties:
+        success:
+          type: "boolean"
+          example: true
+        report:
+          type: "boolean"
+          example: false
+    
+
+  response_400:
+    type: "object"
+    properties:
+      success:
+        type: "boolean"
+        example: false
+      err:
+        type: "any"  
+          
+
+###### 댓글 모델 ######
+comment:
+  modifyComment:
+    request:
+      type: "object"
+      properties:
+        cGroupSquence:
+          type: "string"
+          example: "65"
+        pComment:
+          type: "string"
+          example: "1"
+          
+    response_200:
+      type: "object"
+      properties:
+        success:
+          type: "boolean"
+          example: true
+
+  response_400:
+    type: "object"
+    properties:
+      success:
+        type: "boolean"
+        example: false
+      err:
+        type: "any"
+
+  saveRootComment:
+      request:
+        type: "object"
+        properties:
+          pNum:
+            type: "integer"
+            example: 1
+          cWriter:
+            type: "string"
+            example: "bsj"
+          pComment:
+            type: "string"
+            example: "댓글 내용"
+          gDepth:
+            type: "integer"
+            example: 0
+          date:
+            type: "string"
+            example: "2020-07-07 12:00:00"
+          commentPage:
+            type: "integer"
+            example: 1
+
+      response_200:
+        type: "object"
+        properties:
+          success:
+            type: "boolean"
+            example: true
+          cGroupSquence:
+            type: "string"
+            example: "65"
+          comment:
+            type: "object"
+
+  saveChildComment:
+        request:
+          type: "object"
+          properties:
+            pNum:
+              type: "integer"
+              example: 1
+            cWriter:
+              type: "string"
+              example: "bsj"
+            pComment:
+              type: "string"
+              example: "댓글 내용"
+            gNum:
+              type: "integer"
+              example: 1
+            gDepth:
+              type: "integer"
+              example: 0
+            date:
+              type: "string"
+              example: "2020-07-07 12:00:00"
+            cID:
+              tpye: "string"
+              example: "bsj"
+            commentPage:
+              type: "integer"
+              example: 1
+
+        response_200:
+          type: "object"
+          properties:
+            success:
+              type: "boolean"
+              example: true
+            cGroupSquence:
+              type: "string"
+              example: "65"
+            comment:
+              type: "object"
+
+  getCommentPage:
+        request:
+          type: "object"
+          properties:
+            postNum:
+              type: "integer"
+              example: 1
+            commentPage:
+              type: "integer"
+              example: "1"
+
+        response_200:
+          type: "object"
+          properties:
+            success:
+              type: "boolean"
+              example: true
+            comment:
+              type: "object"
+            commentCnt:
+              type: "integer"
+              example: 10
+
+  getLatestComment:
+        request:
+          type: "object"
+          properties:
+            postNum:
+              type: "integer"
+              example: 1
+            commentPage:
+              type: "integer"
+              example: "1"
+
+        response_200:
+          type: "object"
+          properties:
+            success:
+              type: "boolean"
+              example: true
+            comment:
+              type: "object"
+            commentCnt:
+              type: "integer"
+              example: 10
+
+  deleteComment:
+    request:
+      type: "object"
+      properties:
+        cGroupSquence:
+          type: "string"
+          example: "65"
+
+    response_200:
+      type: "object"
+      properties:
+        success:
+          type: "boolean"
+          example: true
+
+arrays:
+    activityList:
+        type: "object"
+        properties:
+            postnum:
+                type: "integer"
+                example: 180
+            title:
+                type: "string"
+                example: "게시글 78"
+            writer:
+                type: "string"
+                example: "user01"
+            date:
+                type: "string"
+                example: "20.11.10"
+            views:
+                type: "integer"
+                example: 256
+            favorite:
+                type: "integer"
+                example: 10
+    postTextRow:
+        type: "object"
+        properties:
+            rNum:
+                type: "integer"
+                example: 6
+            pNum:
+                type: "integer"
+                example: 190
+            rContent:
+                type: "string"
+                example: "신고 사유"
+            fromId:
+                ype: "string"
+                example: "admin03"
+            toId:
+                type: "string"
+                example: "user03"
+            date:
+                type: "string"
+                example: "20.11.10. 15:47:31"
+            content:
+                type: "string"
+                example: "게시글 내용"
+
+    commentTextRow:
+        type: "object"
+        properties:
+            rNum:
+                type: "integer"
+                example: 4
+            pNum:
+                type: "integer"
+                example: 195
+            content:
+                type: "string"
+                example: "해당 댓글 내용"
+            fromId:
+                ype: "string"
+                example: "신고자 아이디"
+            toId:
+                type: "string"
+                example: "user03"
+            date:
+                type: "string"
+                example: "20.11.10. 15:47:31"
+            cGroupSquence:
+                type: "string"
+                example: "신고 내용"
+
+    boardTextRow:
+        type: "object"
+        properties:
+            postnum:
+                type: "integer"
+                example: 183
+            title:
+                type: "string"
+                example: "게시글의 제목"
+            writer:
+                type: "string"
+                example: "user01"
+            date:
+                ype: "string"
+                example: "20.11.10"
+            views:
+                type: "integer"
+                example: 255
+            favorite:
+                type: "integer"
+                example: 120
+    
+
+mypage:
+    # 마이페이지 정보 전달
+    getActionNum:
+        request:
+            type: "object"
+            required:
+                - "id"
+            properties:
+                id:
+                    type: "string"
+                    example: "user01"
+        response_200:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: true
+                info:
+                    type: "array"
+                    items:
+                        oneOf:
+                            - type: "string"
+                            - type: "integer"
+                            - type: "integer"
+                            - type: "string"
+                            - type: "integer"
+                            - type: "string"
+        response_400:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: false
+                err:
+                    type: "string"
+                    example: "false"
+
+    # 마이페이지 비번 확인
+    confirmPassword:
+        request:
+            type: "object"
+            required:
+                - "id"
+                - "password"
+            properties:
+                id:
+                    type: "string"
+                    example: "user01"
+                password:
+                    type: "string"
+                    example: "123123"
+        response_200:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: true
+        response_400:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: false
+    # 개인정보 변경
+    modifyPrivacy:
+        request:
+            type: "object"
+            required:
+                - "id"
+                - "password"
+                - "email"
+            properties:
+                id:
+                    type: "string"
+                    example: "user01"
+                password:
+                    type: "string"
+                    example: "123123"
+                email:
+                    type: "string"
+                    example: "user01@naver.com"
+        response_200:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: true
+        response_400:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: false
+    # 작성 게시물 요청
+    getActivity:
+        request:
+            type: "object"
+            required:
+                - "currentPage"
+                - "pageSize"
+                - "type"
+                - "id"
+            properties:
+                currentPage:
+                    type: "string"
+                    example: "1"
+                pageSize:
+                    type: "integer"
+                    example: 1
+                type:
+                    type: "string"
+                    example: "게시물"
+                id:
+                    type: "string"
+                    example: "user01"
+        response_200:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: true
+                activityList:
+                    type: "array"
+                    items:
+                        $ref: "#/arrays/activityList"
+
+        response_400:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: false
+                err:
+                    type: "any"
+
+    # 사용자 신고 댓글 요청
+    getMyReportComment:
+        request:
+            type: "object"
+            required:
+                - "id"
+                - "currentPage"
+            properties:
+                currentPage:
+                    type: "string"
+                    example: 1
+        response_200:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: true
+                data:
+                    type: "array"
+                    items:
+                        $ref: "#/arrays/commentTextRow"
+                Count:
+                    type: "object"
+                    properties:
+                        count:
+                            type: "integer"
+                            example: 1
+        response_400:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: false
+                err:
+                    type: "any"
+
+    # 사용자 신고 게시글 요청
+    getMyReportPost:
+        request:
+            type: "object"
+            required:
+                - "id"
+                - "currentPage"
+            properties:
+                id:
+                    type: "string"
+                    example: "user01"
+                currentPage:
+                    type: "integer"
+                    example: 1
+        response_200:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: true
+                data:
+                    type: "array"
+                    items:
+                        $ref: "#/arrays/postTextRow"
+                Count:
+                    type: "object"
+                    properties:
+                        count:
+                            type: "integer"
+                            example: 1
+        response_400:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: false
+                err:
+                    type: "any"
+
+    # 사용자 신고 게시글 취소 요청
+    cancelmyReportPost:
+        request:
+            type: "object"
+            required:
+                - "data"
+            properties:
+                data:
+                    type: "integer"
+                    example: 9
+        response_200:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: true
+        response_400:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: false
+                err:
+                    type: "any"
+    
+    # 사용자 신고 댓글 취소 요청
+    cancelmyReportComment:
+        request:
+            type: "object"
+            required:
+                - "data"
+            properties:
+                data:
+                    type: "integer"
+                    example: 5
+        response_200:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: true
+        response_400:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: false
+                err:
+                    type: "any"
+    # 사용자 아바타 업로드
+    imageUpload:
+        response_200:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: true
+                file:
+                    type: "string"
+                    example: "imgfile1604855922449.png"
+        response_400:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: false
+                err:
+                    type: "any"
+
+user:
+    # 회원가입
+    register:
+        request:
+            type: "object"
+            required:
+                - "id"
+                - "password"
+                - "email"
+            properties:
+                id:
+                    type: "string"
+                    example: "user01"
+                password:
+                    type: "string"
+                    example: "123123"
+                email:
+                    type: "string"
+                    example: "user01@naver.com"
+        response_200:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: true
+        response_400:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: false
+    # 로그인
+    login:
+        request:
+            type: "object"
+            required:
+                - "id"
+                - "password"
+                - "loginDate"
+            properties:
+                id:
+                    type: "string"
+                    example: "user01"
+                password:
+                    type: "string"
+                    example: "123123"
+                loginDate:
+                    type: "string"
+                    example: "2020-11-10 18:13:39.0000000"
+        response_200:
+            description: ""
+            properties:
+                loginSuccess:
+                    type: "boolean"
+                    example: true
+                userId:
+                    type: "string"
+                    example: "User01"
+        response_400:
+            type: "object"
+            properties:
+                loginSuccess:
+                    type: "boolean"
+                    example: false
+    # 로그아웃
+    logout:
+        response_200:
+            properties:
+                success:
+                    type: "boolean"
+                    example: true
+        response_400:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: false
+                err:
+                    type: "string"
+                    example: false
+              
+    # requestPublicKey
+    requestPublicKey:
+        response_200:
+            properties:
+                success:
+                    type: "boolean"
+                    example: true
+                publicKey:
+                  type: "any"
+
+        response_400:
+            type: "object"
+            properties:
+                success:
+                    type: "boolean"
+                    example: false
+                err:
+                    type: "any"
+                    
+    # auth
+    auth:
+        response_200:
+            properties:
+                id:
+                    type: "string"
+                    example: "userId"
+                isAdmin:
+                    type: "boolean"
+                    example: false
+                isAuth:
+                    type: "boolean"
+                    example: true
+                email:
+                    type: "string"
+                    example: "bsj@naver.com"
+                role:
+                    type: "integer"
+                    example: 0
+
+        emptyToken:
+            type: "object"
+            properties:
+                isAuth:
+                    type: "boolean"
+                    example: false
+                err:
+                    type: "boolean"
+                    example: true
+        expToken:
+            type: "object"
+            properties:
+                isAuth:
+                    type: "boolean"
+                    example: true
+                exp:
+                    type: "boolean"
+                    example: true
