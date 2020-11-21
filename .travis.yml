@@ -14,11 +14,11 @@ before_install:
 script:
   - docker run -e CI=true invanda/docker-swagger-api npm run test
 
-after_success:
-    - docker build -t invanda/docker-backend ./backend
-    - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_ID" --password-stdin
-    - docker push invanda/docker-backend
-    - echo "Test Success!"
+# after_success:
+#     - docker build -t invanda/docker-backend ./backend
+#     - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_ID" --password-stdin
+#     - docker push invanda/docker-backend
+#     - echo "Test Success!"
 
 
 deploy:
@@ -29,7 +29,7 @@ deploy:
     bucket_name: elasticbeanstalk-ap-northeast-2-769503300421
     bucket_path: "node-swagger-ui"
     on:
-      branch: master
+        branch: master
     access_key_id: $AWS_ACCESS_KEY
     secret_access_key: $AWS_SECRET_ACCESS_KEY
 
