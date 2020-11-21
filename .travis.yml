@@ -21,5 +21,16 @@ after_success:
     - echo "Test Success!"
 
 
-after_failure:
-    - echo "Test Fail!" 
+deploy:
+    provider: elasticbeanstalk
+    region: "ap-northeast-2"
+    app: "node-swagger-ui"
+    env: "NodeSwaggerUi-env"
+    bucket_name: elasticbeanstalk-ap-northeast-2-769503300421
+    bucket_path: "node-swagger-ui"
+    on:
+        branch: master
+        
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_ACCESS_KEY
+
