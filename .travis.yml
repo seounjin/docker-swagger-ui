@@ -9,32 +9,34 @@ dist: xenial
 
 before_install:
     - echo "start creating an image with dockerfile"
-    - docker build -t invanda/docker-swagger-api -f ./backend/Dockerfile.dev ./backend
+    - docker build -t invanda/docker-swagger-api -f ./frontend/Dockerfile.dev ./frontend
 
 script:
-  - docker run -e CI=true invanda/docker-swagger-api npm run test
-
+    - docker run -e CI=true invanda/react-test-app npm test
+    
 after_success:
+    - docker build -t invanda/docker-frontend ./frontend
     - docker build -t invanda/docker-backend ./backend
     - docker build -t invanda/docker-nginx ./nginx
     - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_ID" --password-stdin
 
+    - docker push invanda/docker-frontend
     - docker push invanda/docker-backend
     - docker push invanda/docker-nginx
 
     - echo "Test Success!"
 
 
-deploy:
-    provider: elasticbeanstalk
-    region: "ap-northeast-2"
-    app: "node-swagger-api"
-    env: "NodeSwaggerApi-env"
-    bucket_name: elasticbeanstalk-ap-northeast-2-769503300421
-    bucket_path: "node-swagger-api"
-    on:
-        branch: master
+# deploy:
+#     provider: elasticbeanstalk
+#     region: "ap-northeast-2"
+#     app: "node-swagger-api"
+#     env: "NodeSwaggerApi-env"
+#     bucket_name: elasticbeanstalk-ap-northeast-2-769503300421
+#     bucket_path: "node-swagger-api"
+#     on:
+#         branch: master
         
-    access_key_id: $AWS_ACCESS_KEY
-    secret_access_key: $AWS_SECRET_ACCESS_KEY
+#     access_key_id: $AWS_ACCESS_KEY
+#     secret_access_key: $AWS_SECRET_ACCESS_KEY
 
