@@ -27,16 +27,16 @@ after_success:
     - echo "Test Success!"
 
 
-deploy:
-    provider: elasticbeanstalk
-    region: "ap-northeast-2"
-    app: "node-swagger-api"
-    env: "NodeSwaggerApi-env"
-    bucket_name: elasticbeanstalk-ap-northeast-2-769503300421
-    bucket_path: "node-swagger-api"
-    on:
-        branch: master
+# deploy:
+#     provider: elasticbeanstalk
+#     region: "ap-northeast-2"
+#     app: "node-swagger-api"
+#     env: "NodeSwaggerApi-env"
+#     bucket_name: elasticbeanstalk-ap-northeast-2-769503300421
+#     bucket_path: "node-swagger-api"
+#     on:
+#         branch: master
         
-    access_key_id: $AWS_ACCESS_KEY
-    secret_access_key: $AWS_SECRET_ACCESS_KEY
+#     access_key_id: $AWS_ACCESS_KEY
+#     secret_access_key: $AWS_SECRET_ACCESS_KEY
 
